@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	<!-- spEL #{프로퍼티즈 빈ID['key값']} -->
+	<!-- xmlns:util="http://www.springframework.org/schema/util"
+		xsi:schemaLocation에 추가 >>http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd -->
+	<util:properties id="db" location="/WEB-INF/spring/properties/db_type.properties" />
+	<util:properties id="dbcp" location="/WEB-INF/spring/properties/#{db['name']}_dbcp.properties" />
+	<util:properties id="sql" location="/WEB-INF/spring/properties/#{db['name']}_sql.properties" />
+	
+	<bean id="ds" class="org.apache.commons.dbcp.BasicDataSource" >
+		<property name="driverClassName" value="#{dbcp['driverClassName']}" />
+		<property name="username" value="#{dbcp['username']}" />
+		<property name="password" value="#{dbcp['password']}" />
+		<property name="url" value="#{dbcp['url']}" />
+		<property name="initialSize" value="#{dbcp['initialSize']}" />
+		<property name="maxActive" value="#{dbcp['maxActive']}" />
+		<property name="minIdle" value="#{dbcp['minIdle']}" />
+		<property name="maxIdle" value="#{dbcp['maxIdle']}" />
+	</bean>
+	<bean id="jdbcTmp" class="org.springframework.jdbc.core.JdbcTemplate">
+		<constructor-arg ref="ds"/>
+	</bean>
+</beans>
