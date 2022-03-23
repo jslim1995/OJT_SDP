@@ -69,10 +69,8 @@
 					date : document.getElementById('startDate').value
 				},
 				function(data, status) {
-					// document.getElementById('endDate').min = document.getElementById('startDate').value;
 					document.getElementById('endDate').max = "2099-12-31";
 					document.getElementById('endDate').value = data;
-					// document.getElementById('endDate').max = data;
 				}
 			)
 		});
@@ -93,10 +91,8 @@
 			});
 		});
 		function goPrintPage() {
-			var start_date = new Date(document.getElementById('startDate').value);
-			start_date = dateFomat(start_date);
-			var selected_date = new Date(document.getElementById('endDate').value);
-			selected_date = dateFomat(selected_date);
+			var start_date = new Date(document.getElementById('startDate').value).toISOString().substring(0, 10);
+			var selected_date = new Date(document.getElementById('endDate').value).toISOString().substring(0, 10);
 			if(selected_date < start_date) {
 				alert("종료일이 시작일 이전입니다.");
 			} else {
@@ -107,8 +103,7 @@
 						date : document.getElementById('startDate').value
 					},
 					function(data, status) {
-						standard_date = new Date(data);
-						standard_date = dateFomat(standard_date);
+						standard_date = new Date(data).toISOString().substring(0, 10);
 						if(selected_date <= standard_date) {
 							var form = document.forms["checkForm"];
 							form["restName"].value = document.getElementById('rest').value;
@@ -122,16 +117,6 @@
 					}
 				)
 			}
-		}
-		function dateFomat(date) {
-			var year = date.getFullYear();
-			var month = date.getMonth()+1;
-			var day = date.getDate();
-			
-			if (isNaN(year) || isNaN(month) || isNaN(day)){
-				fromYear = 0; fromMonth = 0; fromDay = 0;
-			}
-			return year + '-' + month + '-' + day;
 		}
 		function setEndDate() {
 			$.post(

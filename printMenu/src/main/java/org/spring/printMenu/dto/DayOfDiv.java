@@ -52,12 +52,13 @@ public class DayOfDiv {
 		this.foods = foods;
 	}
 	private int dateToDayNum(String date) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Calendar cd = Calendar.getInstance();
 		try {
 			Date temp = sdf.parse(date);
 			cd.setTime(temp);
 		} catch (ParseException e) {}
+		System.out.println(cd.get(Calendar.DAY_OF_WEEK));
 		return cd.get(Calendar.DAY_OF_WEEK);
 	}
 	private String dayNumToDayStr(int dayNum) {

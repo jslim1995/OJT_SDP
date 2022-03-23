@@ -72,7 +72,7 @@ public class TheMenu {
 		}
 	}
 	private String nextDate(String currentDate) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String nextDate ="";
 		try {
 			nextDate = sdf.format(new Date(sdf.parse(currentDate).getTime()+(24*60*60*1000)));
