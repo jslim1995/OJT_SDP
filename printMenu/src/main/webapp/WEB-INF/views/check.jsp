@@ -63,16 +63,8 @@
 	<script>
 		$(window).load(function(){
 			document.getElementById('startDate').value = new Date().toISOString().substring(0, 10);
-			$.post(
-				"getSunday",
-				{
-					date : document.getElementById('startDate').value
-				},
-				function(data, status) {
-					document.getElementById('endDate').max = "2099-12-31";
-					document.getElementById('endDate').value = data;
-				}
-			)
+			document.getElementById('endDate').max = "2099-12-31";
+			document.getElementById('endDate').value = getSunday(new Date()).toISOString().substring(0, 10);
 		});
 		$(function() {
 			$("input[id='startDate']").change(function() {
@@ -91,46 +83,37 @@
 			});
 		});
 		function goPrintPage() {
-			var start_date = new Date(document.getElementById('startDate').value).toISOString().substring(0, 10);
-			var selected_date = new Date(document.getElementById('endDate').value).toISOString().substring(0, 10);
+			var start_date = new Date(document.getElementById('startDate').value);
+			var selected_date = new Date(document.getElementById('endDate').value);
 			if(selected_date < start_date) {
 				alert("종료일이 시작일 이전입니다.");
 			} else {
-				var standard_date;
-				$.post(
-					"getSunday",
-					{
-						date : document.getElementById('startDate').value
-					},
-					function(data, status) {
-						standard_date = new Date(data).toISOString().substring(0, 10);
-						if(selected_date <= standard_date) {
-							var form = document.forms["checkForm"];
-							form["restName"].value = document.getElementById('rest').value;
-							form["divName"].value = document.getElementById("div").value;
-							form["startDate"].value = document.getElementById('startDate').value;
-							form["endDate"].value = document.getElementById('endDate').value;
-							form.submit();
-						} else {
-							alert("종료일이 시작일의 주간을 벗어났습니다.");
-						}
-					}
-				)
+				var standard_date = getSunday(start_date);
+				if(selected_date <= standard_date) {
+					var form = document.forms["checkForm"];
+					form["restName"].value = document.getElementById('rest').value;
+					form["divName"].value = document.getElementById("div").value;
+					form["startDate"].value = document.getElementById('startDate').value;
+					form["endDate"].value = document.getElementById('endDate').value;
+					form.submit();
+				} else {
+					alert("종료일이 시작일의 주간을 벗어났습니다.");
+				}
 			}
 		}
+		function getSunday(start_date) {
+			var Sunday = start_date;
+			if(start_date.getDay() > 0) {
+				Sunday.setDate(start_date.getDate()+7-start_date.getDay());
+			}
+			return Sunday;
+		}
 		function setEndDate() {
-			$.post(
-				"getSunday",
-				{
-					date : document.getElementById('startDate').value
-				},
-				function(data, status) {
-					document.getElementById('endDate').min = document.getElementById('startDate').value;
-					document.getElementById('endDate').max = "2099-12-31";
-					document.getElementById('endDate').value = data;
-					document.getElementById('endDate').max = data;
-				}
-			)
+			var start_date = new Date(document.getElementById('startDate').value);
+			document.getElementById('endDate').min = new Date(document.getElementById('startDate').value).toISOString().substring(0, 10);
+			document.getElementById('endDate').max = "2099-12-31";
+			document.getElementById('endDate').value = getSunday(start_date).toISOString().substring(0, 10);
+			document.getElementById('endDate').max = getSunday(start_date).toISOString().substring(0, 10);
 		}
 	</script>
 </body>

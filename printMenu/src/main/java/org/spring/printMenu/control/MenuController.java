@@ -34,10 +34,4 @@ public class MenuController {
 		model.addAttribute("pg", pg);
 		return "printPreview2";
 	}
-	
-	@RequestMapping("getSunday")
-	@ResponseBody
-	public String getSunday(String date) {
-		return service.getSunday(date);
-	}
 }
