@@ -32,45 +32,71 @@ public class TheMenu {
 		divs.add(new Div("중식"));
 		divs.add(new Div("석식"));
 		divs.add(new Div("간식"));
-		Calendar cd = Calendar.getInstance();
-		try {
-			int year = Integer.parseInt(startDate.substring(0, 4));
-			int month = Integer.parseInt(startDate.substring(5, 7))-1;
-			int day = Integer.parseInt(startDate.substring(8));
-			cd.set(year, month, day);
-			if(cd.get(Calendar.DAY_OF_WEEK) > 1) {
-				cd.set(year, month, day+2-cd.get(Calendar.DAY_OF_WEEK));
-			} else {
-				cd.set(year, month, day-5-cd.get(Calendar.DAY_OF_WEEK));
-			}
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			monDate = sdf.format(cd.getTime());
-//			monDate = cd.get(Calendar.YEAR) + "-" + cd.get(Calendar.MONTH) + "-" + cd.getFirstDayOfWeek();
-			cd.set(year, month, cd.get(Calendar.DAY_OF_MONTH)+6);
-			sunDate = sdf.format(cd.getTime());
-		} catch (Exception e) {
-			System.out.println("check");
-		}
-		
+		setMonDate();
+		setTotalDate();
 		String date = monDate;
 		for(int idxDay = 0; idxDay<7; idxDay++) {
 			addDayOfDiv(date);
-			for(SelectedData temp : sdList) {
-				if(date.equals(temp.getDate())) {
-					try {
-						int idxDiv = Integer.parseInt(temp.getDiv().substring(1))-1;
-						divs.get(idxDiv).getDays().get(idxDay).getFoods().add(new Food(temp.getFoodName(), temp.getDivName(), temp.getIngredientList()));
-					} catch (NumberFormatException e) {}
-				}
-			}
+			addFood(sdList, date, idxDay);
 			date = nextDate(date);
 		}
 	}
+	
+	private void setMonDate() {
+		Calendar cd = Calendar.getInstance();
+		try {
+			setCalender(startDate, cd);
+			if(cd.get(Calendar.DAY_OF_WEEK) > 1) {
+				cd.set(Calendar.DAY_OF_MONTH, cd.get(Calendar.DAY_OF_MONTH)+2-cd.get(Calendar.DAY_OF_WEEK));
+			} else {
+				cd.set(Calendar.DAY_OF_MONTH, cd.get(Calendar.DAY_OF_MONTH)-5-cd.get(Calendar.DAY_OF_WEEK));
+			}
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			monDate = sdf.format(cd.getTime());
+			/* 
+			// 일요일 날짜 설정 
+			cd.set(year, month, cd.get(Calendar.DAY_OF_MONTH)+6);
+			sunDate = sdf.format(cd.getTime());
+			*/
+		} catch (Exception e) {
+			System.out.println("check");
+		}
+	}
+	private void setTotalDate() {
+		Calendar cd = Calendar.getInstance();
+		try {
+			setCalender(startDate, cd);
+			Date start = cd.getTime();
+			setCalender(endDate, cd);
+			Date end = cd.getTime();
+			totalDate = (int)((end.getTime() - start.getTime())/(1000*60*60*24)) + 1;
+		} catch (Exception e) {
+			System.out.println("check");
+		}
+	}
+	private void setCalender(String date, Calendar cd) throws NumberFormatException{
+		int year = Integer.parseInt(date.substring(0, 4));
+		int month = Integer.parseInt(date.substring(5, 7))-1;
+		int day = Integer.parseInt(date.substring(8));
+		cd.set(year, month, day);
+	} 
 	private void addDayOfDiv(String date) {
 		for(Div temp : divs) {
 			temp.getDays().add(new DayOfDiv(date));
 		}
 	}
+	
+	private void addFood(List<SelectedData> sdList, String date, int idxDay) {
+		for(SelectedData temp : sdList) {
+			if(date.equals(temp.getDate())) {
+				try {
+					int idxDiv = Integer.parseInt(temp.getDiv().substring(1))-1;
+					divs.get(idxDiv).getDays().get(idxDay).getFoods().add(new Food(temp.getFoodName(), temp.getDivName(), temp.getIngredientList()));
+				} catch (NumberFormatException e) {}
+			}
+		}
+	}
+	
 	private String nextDate(String currentDate) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String nextDate ="";
@@ -98,9 +124,19 @@ public class TheMenu {
 	public void setEndDate(String endDate) {
 		this.endDate = endDate;
 	}
+	
+	public int getTotalDate() {
+		return totalDate;
+	}
+
+	public void setTotalDate(int totalDate) {
+		this.totalDate = totalDate;
+	}
+
 	public List<Div> getDivs() {
 		return divs;
 	}
+	
 	public void setDivs(List<Div> divs) {
 		this.divs = divs;
 	}

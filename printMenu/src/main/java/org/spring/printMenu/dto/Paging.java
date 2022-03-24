@@ -11,6 +11,7 @@ public class Paging {
 	private String nowDate;
 	private String startDate;
 	private String endDate;
+	private int totalDate;
 	private List<FoodDataOfDay> foodDodList;	// 사실상 여기서 페이징을... 합니다....
 	
 	
@@ -19,6 +20,7 @@ public class Paging {
 		restName = theMenu.getRestName();
 		startDate = theMenu.getStartDate();
 		endDate = theMenu.getEndDate();
+		totalDate = theMenu.getTotalDate();
 		foodDodList = new ArrayList<FoodDataOfDay>();
 		init();
 	}
@@ -32,43 +34,51 @@ public class Paging {
 		}
 		int idxDiv = 0;
 		for(Div divTemp : divs) {
-			int idxFoodDodList = -1;
-			// 요일 갯수만큼 반복
-			for(DayOfDiv temp : divs.get(0).getDays()) {
-				//시작날짜의 인덱스번호
-				idxFoodDodList++;
-				
-				List<Food> foodList = divTemp.getDays().get(idxFoodDodList).getFoods();
-				// 음식들 추가
-				for(Food foodTemp : foodList) {
-					foodDodList.get(idxFoodDodList).getData().add(foodTemp);
-					foodDodList.get(idxFoodDodList).getDataSizes()[idxDiv] += 1;
-					// 재료들 추가
-					for(Ingredient ingTemp : foodTemp.getIngredientList()) {
-						foodDodList.get(idxFoodDodList).getData().add(ingTemp);
-						foodDodList.get(idxFoodDodList).getDataSizes()[idxDiv] += 1;
-					}
-				}
-			}
-			int[] nums = new int[foodDodList.size()];
-			int idx=0;
-			for(FoodDataOfDay temp : foodDodList) {
-				nums[idx++] = temp.getDataSizes()[idxDiv];
-			}
-			Arrays.sort(nums);
-			int max = 0;
-			if(nums.length-1 >= 0) {
-				max = nums[nums.length-1];
-			}
-			for(FoodDataOfDay temp : foodDodList) {
-//				System.out.println("초기사이즈 : " + temp.getDataSizes()[idxDiv]);
-				while(temp.getDataSizes()[idxDiv] < max) {
-					temp.getData().add(new Ingredient(divTemp.getDivName()));
-					temp.getDataSizes()[idxDiv] += 1;
-				}
-//				System.out.println("보정된 사이즈: " + temp.getDataSizes()[idxDiv]);
-			}
+			addFoodData(divs, divTemp, idxDiv);
+			correctFoodDataSize(divTemp, idxDiv);
 			idxDiv++;
+		}
+	}
+	
+	private void addFoodData(List<Div> divs, Div divTemp, int idxDiv) {
+		int idxFoodDodList = -1;
+		// 요일 갯수만큼 반복
+		for(DayOfDiv temp : divs.get(0).getDays()) {
+			//시작날짜의 인덱스번호
+			idxFoodDodList++;
+			
+			List<Food> foodList = divTemp.getDays().get(idxFoodDodList).getFoods();
+			// 음식들 추가
+			for(Food foodTemp : foodList) {
+				foodDodList.get(idxFoodDodList).getData().add(foodTemp);
+				foodDodList.get(idxFoodDodList).getDataSizes()[idxDiv] += 1;
+				// 재료들 추가
+				for(Ingredient ingTemp : foodTemp.getIngredientList()) {
+					foodDodList.get(idxFoodDodList).getData().add(ingTemp);
+					foodDodList.get(idxFoodDodList).getDataSizes()[idxDiv] += 1;
+				}
+			}
+		}
+	}
+	
+	private void correctFoodDataSize(Div divTemp, int idxDiv) {
+		int[] nums = new int[foodDodList.size()];
+		int idx=0;
+		for(FoodDataOfDay temp : foodDodList) {
+			nums[idx++] = temp.getDataSizes()[idxDiv];
+		}
+		Arrays.sort(nums);
+		int max = 0;
+		if(nums.length-1 >= 0) {
+			max = nums[nums.length-1];
+		}
+		for(FoodDataOfDay temp : foodDodList) {
+//			System.out.println("초기사이즈 : " + temp.getDataSizes()[idxDiv]);
+			while(temp.getDataSizes()[idxDiv] < max) {
+				temp.getData().add(new Ingredient(divTemp.getDivName()));
+				temp.getDataSizes()[idxDiv] += 1;
+			}
+//			System.out.println("보정된 사이즈: " + temp.getDataSizes()[idxDiv]);
 		}
 	}
 
@@ -110,6 +120,14 @@ public class Paging {
 
 	public void setEndDate(String endDate) {
 		this.endDate = endDate;
+	}
+
+	public int getTotalDate() {
+		return totalDate;
+	}
+
+	public void setTotalDate(int totalDate) {
+		this.totalDate = totalDate;
 	}
 
 	public List<FoodDataOfDay> getFoodDodList() {

@@ -102,7 +102,7 @@
 	<h3>식단 구성표</h3>
 	<h4><%= pg.getNowDate() %></h4>
 	<table>
-		<caption>식당명 : <%= pg.getRestName() %> / 급식기간 : <%= pg.getStartDate() %> ~ <%= pg.getEndDate() %></caption>
+		<caption>식당명 : <%= pg.getRestName() %> / 급식기간 : <%= pg.getStartDate() %> ~ <%= pg.getEndDate() %> 총 <%= pg.getTotalDate() %> 일</caption>
 	<thead>
 		<tr>
 			<th id="div">구분</th>
